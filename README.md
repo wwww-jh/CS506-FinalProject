@@ -5,6 +5,9 @@ Jiahao Wang
 
 Jiaqing Xu
 
+# midterm report video:
+https://youtu.be/0crtWOfovlo
+
 # Proposal:
 
 # Predicting Daily Restaurant Foot Traffic
