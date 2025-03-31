@@ -1,0 +1,115 @@
+# CS506 Final Project: Predicting Daily Restaurant Foot Traffic
+
+**Team Members:**  
+- Jiale Quan  
+- Jiahao Wang  
+- Jiaqing Xu  
+
+**Midterm Presentation Video:**  
+(Will be added by group member on YouTube)
+
+---
+
+## Project Overview
+
+In this project, we aim to predict the daily number of customers visiting a restaurant using a combination of external data sources, including weather data and online reviews. Accurate foot traffic prediction can improve restaurant decision-making in staffing, inventory management, and customer satisfaction.
+
+We have selected **Victoria Seafood**, a popular Chinese restaurant in Boston, MA, as our case study.
+
+---
+
+## Preliminary Visualizations (Planned)
+
+We are in the process of preparing data visualizations to better understand trends and external factor correlations. Planned visualizations include:
+
+- **Time Series Plots** showing daily customer count trends over time
+- **Scatter Plots** displaying the relationship between temperature, humidity, and estimated foot traffic
+- **Heatmaps** showing correlation matrices between weather conditions, review activity, and customer turnout
+- **Popular Times Analysis** extracted from Google to visualize peak hours for each day
+
+(These visualizations will be finalized after preprocessing is complete.)
+
+---
+
+## Data Processing Progress
+
+We have begun collecting and preprocessing the following datasets:
+
+### Restaurant Selected:
+- **Victoria Seafood Restaurant**
+- Address: 1029 Commonwealth Ave, Boston, MA 02215
+- Google Business Page and Yelp Listing Available
+
+### Data Sources:
+
+- **OpenWeatherMap API**  
+  - Collected hourly and daily weather data for Boston
+  - Features include: temperature, humidity, wind speed, precipitation
+  - Data pipeline written in Python (`get_weather_data.py`)
+
+- **Google Popular Times Data**  
+  - Manually extracted daily “busyness” patterns for each day of the week
+  - These values are used to simulate customer traffic across days
+  - Used as a temporary proxy for real sales or reservation data
+
+- **Yelp API**  
+  - Yelp Fusion API used to retrieve:
+    - Star ratings
+    - Review timestamps
+    - Review texts (for future sentiment analysis)
+  - Script in progress (`get_yelp_reviews.py`)
+
+### Simulated Data:
+- In the absence of actual foot traffic data, we created a synthetic dataset aligned with popular times and weather conditions to enable early modeling.
+
+---
+
+## Modeling Approach
+
+We plan to implement and compare the following models:
+
+1. **Linear Regression**  
+   - To serve as a baseline model
+   - Easy to interpret, allows us to test simple correlations between weather/review activity and foot traffic
+
+2. **XGBoost Regressor**  
+   - A tree-based ensemble model that captures nonlinear interactions
+   - Suitable for mixed feature types and potentially sparse data
+
+3. **Prophet (Time-Series Forecasting)**  
+   - Developed by Facebook, effective for capturing seasonality and trends
+   - Especially useful for modeling long-term foot traffic with daily or weekly periodicity
+
+### Modeling Code (in progress):
+- `models/linear_model.py`
+- `models/xgboost_model.py`
+- `models/prophet_model.py`
+
+We are still finalizing the feature engineering pipeline before model training.
+
+---
+
+## Preliminary Results
+
+Although no formal training has been conducted yet, simulated trends based on Google Popular Times show:
+
+- **Weekend foot traffic is higher** than weekdays
+- **Sunny days** correlate with higher customer turnout (supported by synthetic correlation)
+- **High Yelp activity (more reviews)** may be associated with higher visit numbers
+
+Evaluation metrics such as RMSE and MAE will be calculated once the first round of training is complete.
+
+---
+
+## Next Steps
+
+- Finalize feature engineering (merge weather, reviews, and foot traffic)
+- Train and compare initial models (Linear Regression, XGBoost, Prophet)
+- Conduct cross-validation and error analysis
+- Produce full visualizations for the final presentation
+- (Optional) Build an interactive dashboard using Streamlit or Dash
+
+---
+
+## Repository Structure
+
