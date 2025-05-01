@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Foot Traffic Prediction System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    <style>
+        body {
+            padding-top: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            background-color: #6c757d;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .analysis-image {
+            width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+        }
+        
+        .prediction-result {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+        
+        .tab-content {
+            padding: 20px 0;
+        }
+        
+        #prediction-form label {
+            font-weight: 500;
+        }
+        
+        .nav-tabs .nav-link.active {
+            font-weight: bold;
+            border-bottom: 3px solid #0d6efd;
+        }
+        
+        .historical-data {
+            height: 400px;
+            overflow-y: auto;
+        }
+        
+        #prediction-badge {
+            font-size: 2rem;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        
+        .model-comparison-img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Restaurant Foot Traffic Prediction and Analysis System</h1>
+        
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard" type="button" role="tab" aria-controls="dashboard" aria-selected="true">Analysis Dashboard</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="prediction-tab" data-bs-toggle="tab" data-bs-target="#prediction" type="button" role="tab" aria-controls="prediction" aria-selected="false">Foot Traffic Prediction</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="models-tab" data-bs-toggle="tab" data-bs-target="#models" type="button" role="tab" aria-controls="models" aria-selected="false">Model Comparison</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="historical-tab" data-bs-toggle="tab" data-bs-target="#historical" type="button" role="tab" aria-controls="historical" aria-selected="false">Historical Data</button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="myTabContent">
+            <!-- Dashboard View -->
+            <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+                
+                <!-- Add Dropdown for Chart Selection -->
+                <div class="mb-3">
+                    <label for="chartSelect" class="form-label">Select Analysis Chart:</label>
+                    <select class="form-select" id="chartSelect">
+                        <option value="time-trends" selected>Foot Traffic Time Trends</option>
+                        <option value="weather-impact">Weather Impact on Foot Traffic</option>
+                        <option value="seasonal-patterns">Seasonal Pattern Analysis</option>
+                        <option value="weather-category">Weather Category Impact</option>
+                        <option value="holiday-impact">Holiday vs. Regular Day Comparison</option>
+                        <option value="correlation-heatmap">Feature Correlation Heatmap</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <!-- Chart: Time Trends -->
+                    <div class="col-md-12 analysis-chart-container" id="chart-time-trends"> 
+                        <div class="card">
+                            <div class="card-header">Foot Traffic Time Trends</div>
+                            <div class="card-body">
+                                {% if images.time_series %}
+                                <img src="{{ images.time_series }}" class="analysis-image" alt="Time Series Analysis">
+                                {% else %}
+                                <p class="text-muted">Time series analysis chart is not available</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Chart: Weather Impact -->
+                    <div class="col-md-12 analysis-chart-container" id="chart-weather-impact" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">Weather Impact on Foot Traffic</div>
+                            <div class="card-body">
+                                {% if images.weather_impact %}
+                                <img src="{{ images.weather_impact }}" class="analysis-image" alt="Weather Impact Analysis">
+                                {% else %}
+                                <p class="text-muted">Weather impact analysis chart is not available</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                     <!-- Chart: Seasonal Patterns -->
+                    <div class="col-md-12 analysis-chart-container" id="chart-seasonal-patterns" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">Seasonal Pattern Analysis</div>
+                            <div class="card-body">
+                                {% if images.seasonal_patterns %}
+                                <img src="{{ images.seasonal_patterns }}" class="analysis-image" alt="Seasonal Pattern Analysis">
+                                {% else %}
+                                <p class="text-muted">Seasonal pattern analysis chart is not available</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                     <!-- Chart: Weather Category Impact -->
+                    <div class="col-md-12 analysis-chart-container" id="chart-weather-category" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">Weather Category Impact on Foot Traffic</div>
+                            <div class="card-body">
+                                {% if images.weather_category_impact %}
+                                <img src="{{ images.weather_category_impact }}" class="analysis-image" alt="Weather Category Impact Analysis">
+                                {% else %}
+                                <p class="text-muted">Weather category impact analysis chart is not available</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                     <!-- Chart: Holiday Impact -->
+                    <div class="col-md-12 analysis-chart-container" id="chart-holiday-impact" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">Holiday vs. Regular Day Foot Traffic Comparison</div>
+                            <div class="card-body">
+                                {% if images.holiday_impact %}
+                                <img src="{{ images.holiday_impact }}" class="analysis-image" alt="Holiday Impact Analysis">
+                                {% else %}
+                                <p class="text-muted">Holiday impact analysis chart is not available</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                     <!-- Chart: Correlation Heatmap -->
+                    <div class="col-md-12 analysis-chart-container" id="chart-correlation-heatmap" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">Feature Correlation Heatmap</div>
+                            <div class="card-body">
+                                {% if images.correlation_heatmap %}
+                                <img src="{{ images.correlation_heatmap }}" class="analysis-image" alt="Feature Correlation Heatmap">
+                                {% else %}
+                                <p class="text-muted">Feature correlation heatmap is not available</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Prediction View -->
+            <div class="tab-pane fade" id="prediction" role="tabpanel" aria-labelledby="prediction-tab">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Predict Foot Traffic</div>
+                            <div class="card-body">
+                                <form id="prediction-form">
+                                    <div class="mb-3">
+                                        <label for="prediction-date" class="form-label">Date</label>
+                                        <input type="date" class="form-control" id="prediction-date" required>
+                                        <div class="invalid-feedback">Please select a date</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="prediction-temperature" class="form-label">Temperature (°C)</label>
+                                        <input type="number" step="0.1" class="form-control" id="prediction-temperature" 
+                                               min="-20" max="40" required>
+                                        <div class="form-text">Reasonable temperature range: -20°C to 40°C</div>
+                                        <div class="invalid-feedback">Please enter a valid temperature value</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="prediction-humidity" class="form-label">Humidity (%)</label>
+                                        <input type="number" step="0.1" min="0" max="100" class="form-control" 
+                                               id="prediction-humidity" required>
+                                        <div class="form-text">Humidity range: 0% to 100%</div>
+                                        <div class="invalid-feedback">Please enter humidity value between 0-100</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="prediction-precipitation" class="form-label">Precipitation (mm)</label>
+                                        <input type="number" step="0.01" min="0" class="form-control" 
+                                               id="prediction-precipitation" required>
+                                        <div class="form-text">0 means no precipitation, typical range: 0.1-20mm</div>
+                                        <div class="invalid-feedback">Please enter a valid precipitation amount</div>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">Predict Foot Traffic</button>
+                                    </div>
+                                </form>
+                                <div id="loading" class="text-center my-3" style="display:none;">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Processing prediction...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">Prediction Results</div>
+                            <div class="card-body text-center" id="prediction-results">
+                                <p class="mb-4">Enter weather and date information on the left to make a prediction</p>
+                                <div id="prediction-results-content" style="display: none;">
+                                    <h3>Estimated Foot Traffic</h3>
+                                    <div class="badge bg-primary" id="prediction-badge">--</div>
+                                    
+                                    <table class="table table-bordered mt-4">
+                                        <tr>
+                                            <th>Date</th>
+                                            <td id="result-date">--</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Day Type</th>
+                                            <td id="result-day-type">--</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Holiday</th>
+                                            <td id="result-holiday">--</td>
+                                        </tr>
+                                    </table>
+                                    
+                                    <div id="weather-summary" class="alert alert-info mt-3">
+                                        <h5>Weather Summary</h5>
+                                        <p id="weather-description">--</p>
+                                    </div>
+                                    
+                                    <div id="historical-comparison" class="mt-3">
+                                        <h5>Historical Reference Data</h5>
+                                        <p id="historical-reference">--</p>
+                                    </div>
+                                </div>
+                                <div id="prediction-error" class="alert alert-danger" style="display: none;">
+                                    An error occurred during prediction. Please try again later.
+                                    <div id="error-details" class="mt-2 small"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">Model Information</div>
+                            <div class="card-body">
+                                <div class="row">
+                                    {% if model_info %}
+                                    <div class="col-md-4">
+                                        <p><strong>Model Type:</strong> {{ model_info.model_name }}</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <p><strong>RMSE:</strong> {{ model_info.test_rmse }}</p>
+                                        <p><strong>MAE:</strong> {{ model_info.test_mae }}</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <p><strong>R²:</strong> {{ model_info.test_r2 }}</p>
+                                    </div>
+                                    {% else %}
+                                    <div class="col-12">
+                                        <p class="text-muted">Model information not available</p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Model Comparison View -->
+            <div class="tab-pane fade" id="models" role="tabpanel" aria-labelledby="models-tab">
+                <div class="card">
+                    <div class="card-header">Model Performance Comparison</div>
+                    <div class="card-body">
+                        <h5 class="mb-3">Actual vs Predicted Comparisons</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header">XGBoost</div>
+                                    <div class="card-body">
+                                        {% if model_images.xgboost_pred %}
+                                        <img src="{{ model_images.xgboost_pred }}" class="model-comparison-img" alt="XGBoost Comparison">
+                                        {% else %}
+                                        <p class="text-muted">XGBoost comparison image not available</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header">Gradient Boosting</div>
+                                    <div class="card-body">
+                                        {% if model_images.gradient_boosting_pred %}
+                                        <img src="{{ model_images.gradient_boosting_pred }}" class="model-comparison-img" alt="Gradient Boosting Comparison">
+                                        {% else %}
+                                        <p class="text-muted">Gradient Boosting comparison image not available</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header">Random Forest</div>
+                                    <div class="card-body">
+                                        {% if model_images.random_forest_pred %}
+                                        <img src="{{ model_images.random_forest_pred }}" class="model-comparison-img" alt="Random Forest Comparison">
+                                        {% else %}
+                                        <p class="text-muted">Random Forest comparison image not available</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header">Linear/Ridge Regression</div>
+                                    <div class="card-body">
+                                        {% if model_images.ridge_pred %}
+                                        <img src="{{ model_images.ridge_pred }}" class="model-comparison-img" alt="Ridge Regression Comparison">
+                                        {% else %}
+                                        <p class="text-muted">Ridge Regression comparison image not available</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h5 class="mb-3 mt-4">Feature Importance Analysis</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header">XGBoost Features</div>
+                                    <div class="card-body">
+                                        {% if model_images.xgboost_feat %}
+                                        <img src="{{ model_images.xgboost_feat }}" class="model-comparison-img" alt="XGBoost Feature Importance">
+                                        {% else %}
+                                        <p class="text-muted">XGBoost feature importance image not available</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header">Random Forest Features</div>
+                                    <div class="card-body">
+                                        {% if model_images.random_forest_feat %}
+                                        <img src="{{ model_images.random_forest_feat }}" class="model-comparison-img" alt="Random Forest Feature Importance">
+                                        {% else %}
+                                        <p class="text-muted">Random Forest feature importance image not available</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Historical Data View -->
+            <div class="tab-pane fade" id="historical" role="tabpanel" aria-labelledby="historical-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Recent Historical Data</span>
+                            <button id="refresh-historical" class="btn btn-sm btn-outline-light">Refresh</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="historical-data">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Foot Traffic</th>
+                                        <th>Temperature (°C)</th>
+                                        <th>Humidity (%)</th>
+                                        <th>Precipitation (mm)</th>
+                                        <th>Weekend</th>
+                                        <th>Holiday</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historical-data-table">
+                                    <tr>
+                                        <td colspan="7" class="text-center">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Set today's date as the default prediction date
+            $('#prediction-date').val(new Date().toISOString().split('T')[0]);
+            
+            // Load historical data
+            loadHistoricalData();
+
+            // --- Start: Dashboard Chart Selection Logic ---
+            function showSelectedChart() {
+                const selectedValue = $('#chartSelect').val();
+                // Hide all chart containers
+                $('.analysis-chart-container').hide();
+                // Show the selected chart container
+                $('#chart-' + selectedValue).show();
+                 // Adjust layout if needed (optional, depends on chart sizes)
+                // $('#chart-' + selectedValue).removeClass('col-md-6').addClass('col-md-12'); // Already done in HTML
+            }
+
+            // Initial chart display
+            showSelectedChart(); 
+
+            // Event listener for dropdown change
+            $('#chartSelect').on('change', function() {
+                showSelectedChart();
+            });
+            // --- End: Dashboard Chart Selection Logic ---
+            
+            // Form validation
+            function validateForm() {
+                let isValid = true;
+                
+                // Validate date
+                const dateField = $('#prediction-date');
+                if (!dateField.val()) {
+                    dateField.addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    dateField.removeClass('is-invalid');
+                }
+                
+                // Validate temperature
+                const tempField = $('#prediction-temperature');
+                const temp = parseFloat(tempField.val());
+                if (isNaN(temp) || temp < -20 || temp > 40) {
+                    tempField.addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    tempField.removeClass('is-invalid');
+                }
+                
+                // Validate humidity
+                const humidField = $('#prediction-humidity');
+                const humid = parseFloat(humidField.val());
+                if (isNaN(humid) || humid < 0 || humid > 100) {
+                    humidField.addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    humidField.removeClass('is-invalid');
+                }
+                
+                // Validate precipitation
+                const precipField = $('#prediction-precipitation');
+                const precip = parseFloat(precipField.val());
+                if (isNaN(precip) || precip < 0) {
+                    precipField.addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    precipField.removeClass('is-invalid');
+                }
+                
+                return isValid;
+            }
+            
+            // Prediction form submission
+            $('#prediction-form').on('submit', function(e) {
+                e.preventDefault();
+                
+                // Form validation
+                if (!validateForm()) {
+                    return;
+                }
+                
+                // Hide previous error messages and results
+                $('#prediction-error').hide();
+                $('#prediction-results-content').hide();
+                
+                // Show loading state
+                $('#loading').show();
+                
+                // Collect form data
+                const formData = {
+                    date: $('#prediction-date').val(),
+                    temperature: $('#prediction-temperature').val(),
+                    humidity: $('#prediction-humidity').val(),
+                    precipitation: $('#prediction-precipitation').val()
+                };
+                
+                // Send prediction request
+                $.ajax({
+                    type: 'POST',
+                    url: '/predict',
+                    data: formData,
+                    success: function(response) {
+                        // Hide loading state
+                        $('#loading').hide();
+                        
+                        // Show prediction results
+                        $('#prediction-results-content').show();
+                        $('#prediction-badge').text(response.prediction);
+                        $('#result-date').text(response.date);
+                        $('#result-day-type').text(response.day_type);
+                        $('#result-holiday').text(response.holiday);
+                        
+                        // Show weather summary
+                        const weather = response.weather_info;
+                        $('#weather-description').html(
+                            `Temperature: ${weather.temperature}°C (${weather.temp_category}), ` +
+                            `Humidity: ${weather.humidity}% (${weather.humidity_category}), ` +
+                            `Precipitation: ${weather.precipitation}mm (${weather.rain_category})`
+                        );
+                        
+                        // Show historical reference
+                        const hist = response.historical_reference;
+                        if (hist.similar_days_count > 0) {
+                            $('#historical-reference').html(
+                                `Found <b>${hist.similar_days_count}</b> days with similar conditions in historical data, ` +
+                                `with an average foot traffic of <b>${hist.avg_foot_traffic}</b> people.`
+                            );
+                        } else {
+                            $('#historical-reference').text('No similar conditions found in historical data.');
+                        }
+                    },
+                    error: function(error) {
+                        // Hide loading state
+                        $('#loading').hide();
+                        
+                        console.error('Prediction error:', error);
+                        $('#prediction-error').show();
+                        $('#prediction-results-content').hide();
+                        
+                        // Show detailed error information
+                        if (error.responseJSON && error.responseJSON.error) {
+                            $('#error-details').html(`Error details: ${error.responseJSON.error}`);
+                        } else {
+                            $('#error-details').html('Cannot connect to server, please check your network connection.');
+                        }
+                    }
+                });
+            });
+            
+            // Refresh historical data
+            $('#refresh-historical').on('click', function() {
+                loadHistoricalData();
+            });
+        });
+        
+        // Load historical data
+        function loadHistoricalData() {
+            $('#historical-data-table').html('<tr><td colspan="7" class="text-center">Loading...</td></tr>');
+            
+            $.ajax({
+                type: 'GET',
+                url: '/api/historical_data',
+                success: function(data) {
+                    // Clear table
+                    $('#historical-data-table').empty();
+                    
+                    // Add data rows
+                    data.forEach(function(item) {
+                        let row = `<tr>
+                            <td>${item.date}</td>
+                            <td>${item.foot_traffic}</td>
+                            <td>${item.temperature.toFixed(1)}</td>
+                            <td>${item.humidity.toFixed(1)}</td>
+                            <td>${item.precipitation.toFixed(2)}</td>
+                            <td>${item.is_weekend ? 'Yes' : 'No'}</td>
+                            <td>${item.is_holiday ? 'Yes' : 'No'}</td>
+                        </tr>`;
+                        $('#historical-data-table').append(row);
+                    });
+                },
+                error: function(error) {
+                    console.error('Error loading historical data:', error);
+                    $('#historical-data-table').html('<tr><td colspan="7" class="text-center text-danger">Failed to load data</td></tr>');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
