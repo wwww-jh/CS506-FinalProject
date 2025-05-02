@@ -6,7 +6,7 @@ from matplotlib.ticker import MaxNLocator
 import matplotlib.dates as mdates
 import os
 
-# 定义项目根路径
+
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 def load_processed_data(filepath):

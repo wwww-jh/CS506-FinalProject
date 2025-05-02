@@ -10,7 +10,7 @@ import seaborn as sns
 import joblib
 import os
 
-# 定义项目根路径
+
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 def load_data(filepath):
