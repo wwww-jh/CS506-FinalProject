@@ -64,7 +64,7 @@ Restaurants often struggle to predict how many customers will visit on a given d
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/CS506-FinalProject.git
+git clone https://github.com/wwww-jh/CS506-FinalProject.git
 cd CS506-FinalProject
 ```
 
